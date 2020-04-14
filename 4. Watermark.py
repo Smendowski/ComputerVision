@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
+from utilities import image_resize
 
-w_icon = cv2.imread('watermark/icon.png', -1)
+w_icon = cv2.imread('images/watermark/icon.png', -1)
 watermark = image_resize(w_icon, height=50)
 watermark = cv2.cvtColor(watermark, cv2.COLOR_BGR2BGRA)
 #cv2.imshow('watermark', watermark)
@@ -58,26 +59,3 @@ cv2.destroyAllWindows()
 # same size as frame, and replaced it's part with a
 # watermark icon. 
 
-# source: https://stackoverflow.com/a/44659589
-def image_resize(image, width = None, height = None, inter = cv2.INTER_AREA):
-    dim = None
-    (h, w) = image.shape[:2]
-    if width is None and height is None:
-        return image
-        #original image
-  
-    if width is None:
-        # calculate the ratio of the height and construct the
-        # dimensions
-        r = height / float(h)
-        dim = (int(w * r), height)
-    # otherwise, the height is None
-    else:
-        # calculate the ratio of the width and construct the
-        # dimensions
-        r = width / float(w)
-        dim = (width, int(h * r))
-
-   
-    resized = cv2.resize(image, dim, interpolation = inter)
-    return resized
