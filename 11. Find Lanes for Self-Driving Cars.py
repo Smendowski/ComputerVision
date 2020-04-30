@@ -26,11 +26,31 @@ def region_of_interest(image):
 	mask = np.zeros_like(image)
 	# polygons needs to be an np Array
 	cv2.fillPoly(mask, polygons, 255)
-	return mask
+	masked_image = cv2.bitwise_and(image, mask)
+	return masked_image
 
 # To find ROI triangle coordinates
 #plt.imshow(lane_canny)
 #plt.show()
+cropped_image = region_of_interest(lane_canny)
 
-cv2.imshow("result", region_of_interest(lane_canny))
+# Hough Transform y = mx + b -> represented by single point (m,b)
+# Signle point represented by line function in Hough Space
+
+def display_lines(images, lines):
+	line_image = np.zeros_like(image)
+	if lines is not None:
+		for line in lines:
+			x1,y1,x2,y2 = line.reshape(4)
+			cv2.line(line_image, (x1,y1), (x2,y2), (255,0,0), 10)
+	return line_image
+
+
+lines = cv2.HoughLinesP(cropped_image, 2, np.pi/180, 100,
+	np.array([]), minLineLength=40, maxLineGap=5)
+
+line_image = display_lines(lane_image, lines)
+combo_image = cv2.addWeighted(lane_image, 0.8, line_image, 1, 1)
+
+cv2.imshow("result", combo_image)
 cv2.waitKey(0)
